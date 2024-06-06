@@ -2,7 +2,12 @@ import type { Config } from 'tailwindcss';
 
 const config = {
   darkMode: ['class'],
-  content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
+  content: [
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
+  ],
   prefix: '',
   theme: {
     container: {
@@ -13,7 +18,39 @@ const config = {
       },
     },
     extend: {
+      dropShadow: {
+        glow: [
+          '0 0px 20px rgba(255,255, 255, 0.35)',
+          '0 0px 65px rgba(255, 255,255, 0.2)',
+        ],
+      },
       colors: {
+        'frx-red': {
+          50: '#FFEBEB',
+          100: '#FFE0E0',
+          200: '#FFCCCC',
+          300: '#FFB3B3',
+          400: '#FF9E9E',
+          500: '#FF8A8A',
+          600: '#FF7575',
+          700: '#FF6161',
+          800: '#FF4747',
+          900: '#FF3333',
+          950: '#FF2929',
+        },
+        'frx-blue': {
+          50: '#E1E9EF',
+          100: '#D0DDE7',
+          200: '#B2C7D7',
+          300: '#93B1C7',
+          400: '#759BB8',
+          500: '#5785A8',
+          600: '#476D8A',
+          700: '#365268',
+          800: '#263A4A',
+          900: '#17232C',
+          950: '#0F171D',
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
