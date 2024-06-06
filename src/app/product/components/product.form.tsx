@@ -4,6 +4,8 @@ import { FormItem } from '../../../components/ui/form-item';
 import { Input } from '../../../components/ui/input';
 import { Form } from '../../../components/ui/form';
 import { BaseFormRef } from '@/types/BaseFormRef';
+import { useProductStore } from '../store/product-store';
+import { getRandomUUID } from '@/utils/crypto';
 
 export type ProductFormData = {
   name: string;
@@ -25,13 +27,15 @@ export type ProductFormRef = BaseFormRef<ProductFormData>;
 
 export const ProductForm = forwardRef<ProductFormRef, ProductFormProps>(
   ({ onSuccess }, ref) => {
+    const addProduct = useProductStore((state) => state.addProduct);
+
     const form = useForm({
       defaultValues: productFormInitialValues,
     });
 
     const submit = () => {
       form.handleSubmit(async (values) => {
-        console.log(values);
+        addProduct({ ...values, id: getRandomUUID() });
         onSuccess && onSuccess(values);
       })();
     };

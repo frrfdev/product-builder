@@ -1,12 +1,12 @@
 import React from 'react';
-import { CategoryFilter } from './components/category.filter';
+import { CategoryTable } from './components/category.table';
 
 type Props = {};
 
 const CategoryPage = (props: Props) => (
   <div>
     CategoryPage
-    <CategoryFilter />
+    <CategoryTable />
   </div>
 );
 

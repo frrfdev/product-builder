@@ -4,6 +4,8 @@ import { FormItem } from '../../../components/ui/form-item';
 import { Input } from '../../../components/ui/input';
 import { Form } from '../../../components/ui/form';
 import { BaseFormRef } from '@/types/BaseFormRef';
+import { useCategoryStore } from '../store/category-store';
+import { getRandomUUID } from '@/utils/crypto';
 
 export type CategoryFormData = {
   name: string;
@@ -21,13 +23,15 @@ export type CategoryFormRef = BaseFormRef<CategoryFormData>;
 
 export const CategoryForm = forwardRef<CategoryFormRef, CategoryFormProps>(
   ({ onSuccess }, ref) => {
+    const addCategory = useCategoryStore((state) => state.addCategory);
+
     const form = useForm({
       defaultValues: categoryFormInitialValues,
     });
 
     const submit = () => {
       form.handleSubmit(async (values) => {
-        console.log(values);
+        addCategory({ ...values, id: getRandomUUID() });
         onSuccess && onSuccess(values);
       })();
     };
@@ -39,7 +43,7 @@ export const CategoryForm = forwardRef<CategoryFormRef, CategoryFormProps>(
 
     return (
       <Form form={form} onSubmit={submit}>
-        <FormItem name="name" label="Nome">
+        <FormItem name="name" label="Nome" rules={{ required: true }}>
           <Input></Input>
         </FormItem>
       </Form>

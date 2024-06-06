@@ -8,6 +8,7 @@ import { IngredientData } from '@/types/IngredientData';
 import { getRandomUUID } from '@/utils/crypto';
 import { Button } from '@/components/ui/button';
 import { Trash } from 'lucide-react';
+import { useRecipeStore } from '../store/recipe-store';
 
 export type RecipeFormData = {
   name: string;
@@ -27,6 +28,8 @@ export type RecipeFormRef = BaseFormRef<RecipeFormData>;
 
 export const RecipeForm = forwardRef<RecipeFormRef, RecipeFormProps>(
   ({ onSuccess }, ref) => {
+    const addRecipe = useRecipeStore((state) => state.addRecipe);
+
     const form = useForm({
       defaultValues: recipeFormInitialValues,
     });
@@ -35,7 +38,7 @@ export const RecipeForm = forwardRef<RecipeFormRef, RecipeFormProps>(
 
     const submit = () => {
       form.handleSubmit(async (values) => {
-        console.log(values);
+        addRecipe({ ...values, id: getRandomUUID() });
         onSuccess && onSuccess(values);
       })();
     };

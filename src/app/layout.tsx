@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
+import { AlertDialogProvider } from '@/components/ui/alert-dialog';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={cn(inter.className, 'dark:bg-frx-blue-950')}>
-        {children}
+        <AlertDialogProvider>{children}</AlertDialogProvider>
       </body>
     </html>
   );
