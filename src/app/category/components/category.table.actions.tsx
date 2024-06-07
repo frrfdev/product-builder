@@ -10,6 +10,8 @@ import {
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 import { useAlertDialog } from '@/components/ui/alert-dialog';
+import { FlatButton } from '@/components/ui/button';
+import { CategoryModal } from './category.modal';
 
 type Props = {
   category: CategoryData;
@@ -47,9 +49,11 @@ export const CategoryTableActions = (props: Props) => {
     <>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Ações</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleEditCategory}>
-          Editar Categoria
-        </DropdownMenuItem>
+        <CategoryModal>
+          <DropdownMenuItem onClick={handleEditCategory}>
+            Editar Categoria
+          </DropdownMenuItem>
+        </CategoryModal>
         <DropdownMenuItem onClick={handleDeleteCategory}>
           Deletar Categoria
         </DropdownMenuItem>

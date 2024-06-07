@@ -14,6 +14,7 @@ import {
   categoryFormInitialValues,
   CategoryFormRef,
 } from './category.form';
+import { useCategoryStore } from '../store/category-store';
 
 type CategoryModalProps = {
   children: React.ReactNode;
@@ -22,18 +23,36 @@ type CategoryModalProps = {
 export const CategoryModal = (props: CategoryModalProps) => {
   const formRef = useRef<CategoryFormRef>(null);
 
-  const [isOpen, setIsOpen] = React.useState(false);
+  const isCategoryModalOpen = useCategoryStore(
+    (state) => state.isCategoryModalOpen
+  );
+  const setIsCategoryModalOpen = useCategoryStore(
+    (state) => state.setIsCategoryModalOpen
+  );
+  const setCategoryToUpdate = useCategoryStore(
+    (state) => state.setCategoryToUpdate
+  );
+  const categoryToUpdate = useCategoryStore((state) => state.categoryToUpdate);
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isCategoryModalOpen}
+      onOpenChange={(value) => {
+        setIsCategoryModalOpen(value);
+        if (!value) setCategoryToUpdate(null);
+      }}
+    >
       <DialogTrigger>{props.children}</DialogTrigger>
       <DialogPortal>
         <DialogContent className="w-[90%]">
-          <DialogHeader>Nova Categoria</DialogHeader>
+          <DialogHeader>
+            {categoryToUpdate ? 'Editar' : 'Nova'} Categoria
+          </DialogHeader>
           <CategoryForm
             ref={formRef}
             onSuccess={() => {
-              setIsOpen(false);
+              setIsCategoryModalOpen(false);
+              setCategoryToUpdate(null);
             }}
           ></CategoryForm>
           <DialogFooterForm
@@ -42,6 +61,8 @@ export const CategoryModal = (props: CategoryModalProps) => {
             }}
             onCancel={() => {
               formRef.current?.form.reset(categoryFormInitialValues);
+              setCategoryToUpdate(null);
+              setIsCategoryModalOpen(false);
             }}
           ></DialogFooterForm>
         </DialogContent>

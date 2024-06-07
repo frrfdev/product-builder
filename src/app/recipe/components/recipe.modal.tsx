@@ -12,6 +12,7 @@ import {
   recipeFormInitialValues,
   RecipeFormRef,
 } from './recipe.form';
+import { useRecipeStore } from '../store/recipe-store';
 
 type RecipeModalProps = {
   children: React.ReactNode;
@@ -20,18 +21,31 @@ type RecipeModalProps = {
 export const RecipeModal = (props: RecipeModalProps) => {
   const formRef = useRef<RecipeFormRef>(null);
 
-  const [isOpen, setIsOpen] = React.useState(false);
+  const isRecipeModalOpen = useRecipeStore((state) => state.isRecipeModalOpen);
+  const setIsRecipeModalOpen = useRecipeStore(
+    (state) => state.setIsRecipeModalOpen
+  );
+  const setRecipeToUpdate = useRecipeStore((state) => state.setRecipeToUpdate);
+  const recipeToUpdate = useRecipeStore((state) => state.recipeToUpdate);
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isRecipeModalOpen}
+      onOpenChange={(value) => {
+        setIsRecipeModalOpen(value);
+        if (!value) setRecipeToUpdate(null);
+      }}
+    >
       <DialogTrigger>{props.children}</DialogTrigger>
       <DialogPortal>
         <DialogContent className="w-[90%]">
-          <DialogHeader>Novo Produto</DialogHeader>
+          <DialogHeader>
+            {recipeToUpdate ? 'Editar' : 'Nova'} Receita
+          </DialogHeader>
           <RecipeForm
             ref={formRef}
             onSuccess={() => {
-              setIsOpen(false);
+              setIsRecipeModalOpen(false);
             }}
           ></RecipeForm>
           <DialogFooterForm
@@ -40,6 +54,7 @@ export const RecipeModal = (props: RecipeModalProps) => {
             }}
             onCancel={() => {
               formRef.current?.form.reset(recipeFormInitialValues);
+              setIsRecipeModalOpen(false);
             }}
           ></DialogFooterForm>
         </DialogContent>

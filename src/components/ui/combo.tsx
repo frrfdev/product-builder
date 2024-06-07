@@ -41,7 +41,7 @@ export type OptionData<T = any> = (
       key?: string;
       [other: string]: unknown;
     }
-) & { data: T };
+) & { data?: T };
 
 export type ComboBoxItem = {
   label: string;
@@ -198,7 +198,7 @@ const Combo = <T extends OptionData>(
         disabled={disabled}
         className="relative group/combo"
       >
-        <div
+        <button
           className={cn(
             buttonVariants({ variant: 'outline' }),
             'w-[200px] h-10 py-2 justify-between overflow-hidden overflow-ellipsis whitespace-nowrap ',
@@ -206,6 +206,7 @@ const Combo = <T extends OptionData>(
             className,
             disabled ? 'pointer-events-none opacity-50 cursor-not-allowed' : ''
           )}
+          disabled={disabled}
           aria-expanded={open}
           title={
             (selectedOption &&
@@ -238,7 +239,7 @@ const Combo = <T extends OptionData>(
           ) : (
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           )}
-        </div>
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[--radix-popover-content-available-height] p-0">
         <Command shouldFilter={false}>

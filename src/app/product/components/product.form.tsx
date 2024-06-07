@@ -1,5 +1,5 @@
-import React, { forwardRef, useImperativeHandle } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { forwardRef, useEffect, useImperativeHandle } from 'react';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { FormItem } from '../../../components/ui/form-item';
 import { Input, InputMoney } from '../../../components/ui/input';
 import { Form } from '../../../components/ui/form';
@@ -8,13 +8,16 @@ import { useProductStore } from '../store/product-store';
 import { getRandomUUID } from '@/utils/crypto';
 import { CategorySelect } from '@/app/category/components/category.select';
 import { CategoryModal } from '@/app/category/components/category.modal';
-import { FlatButton } from '@/components/ui/button';
+import { Button, FlatButton } from '@/components/ui/button';
 import { NumberUtils } from '@/utils/number';
+import { Calculator } from 'lucide-react';
+import { ProductCalculateModal } from './product-calculate.modal';
 
 export type ProductFormData = {
   name: string;
   categoryId: string;
   price: number;
+  id?: string;
 };
 
 export type ProductFormProps = {
@@ -25,6 +28,7 @@ export const productFormInitialValues = {
   name: '',
   categoryId: '',
   price: 0,
+  id: '',
 };
 
 export type ProductFormRef = BaseFormRef<ProductFormData>;
@@ -32,6 +36,8 @@ export type ProductFormRef = BaseFormRef<ProductFormData>;
 export const ProductForm = forwardRef<ProductFormRef, ProductFormProps>(
   ({ onSuccess }, ref) => {
     const addProduct = useProductStore((state) => state.addProduct);
+    const updateProduct = useProductStore((state) => state.updateProduct);
+    const productToUpdate = useProductStore((state) => state.productToUpdate);
 
     const form = useForm({
       defaultValues: productFormInitialValues,
@@ -39,15 +45,20 @@ export const ProductForm = forwardRef<ProductFormRef, ProductFormProps>(
 
     const submit = () => {
       form.handleSubmit(async (values) => {
-        addProduct({ ...values, id: getRandomUUID() });
+        if (productToUpdate) updateProduct(productToUpdate.id, values);
+        else addProduct({ ...values, id: getRandomUUID() });
         onSuccess && onSuccess(values);
       })();
     };
 
     useImperativeHandle(ref, () => ({
-      form,
+      form: form as UseFormReturn<ProductFormData>,
       submit,
     }));
+
+    useEffect(() => {
+      if (productToUpdate) form.reset(productToUpdate);
+    }, [productToUpdate]);
 
     return (
       <Form form={form} onSubmit={submit}>
@@ -64,16 +75,29 @@ export const ProductForm = forwardRef<ProductFormRef, ProductFormProps>(
           </CategoryModal>
         </div>
 
-        <FormItem
-          name="price"
-          label="Preço por g/ml"
-          rules={{
-            setValueAs: (value: string) =>
-              Number(NumberUtils.moneyToNumber(value)),
-          }}
-        >
-          <InputMoney />
-        </FormItem>
+        <div className="flex gap-2 items-end">
+          <FormItem
+            name="price"
+            label="Preço por g/ml"
+            rules={{
+              setValueAs: (val) => {
+                if (typeof val === 'number') return val;
+                return NumberUtils.toNumber(val);
+              },
+            }}
+          >
+            <InputMoney />
+          </FormItem>
+          <ProductCalculateModal
+            onSuccess={(price) => {
+              form.setValue('price', price);
+            }}
+          >
+            <Button type="button">
+              <Calculator></Calculator>
+            </Button>
+          </ProductCalculateModal>
+        </div>
       </Form>
     );
   }

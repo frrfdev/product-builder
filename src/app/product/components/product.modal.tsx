@@ -12,6 +12,7 @@ import {
   productFormInitialValues,
   ProductFormRef,
 } from './product.form';
+import { useProductStore } from '../store/product-store';
 
 type ProductModalProps = {
   children: React.ReactNode;
@@ -20,18 +21,36 @@ type ProductModalProps = {
 export const ProductModal = (props: ProductModalProps) => {
   const formRef = useRef<ProductFormRef>(null);
 
-  const [isOpen, setIsOpen] = React.useState(false);
+  const isProductModalOpen = useProductStore(
+    (state) => state.isProductModalOpen
+  );
+  const setIsProductModalOpen = useProductStore(
+    (state) => state.setIsProductModalOpen
+  );
+  const setProductToUpdate = useProductStore(
+    (state) => state.setProductToUpdate
+  );
+  const productToUpdate = useProductStore((state) => state.productToUpdate);
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isProductModalOpen}
+      onOpenChange={(value) => {
+        setIsProductModalOpen(value);
+        if (!value) setProductToUpdate(null);
+      }}
+    >
       <DialogTrigger>{props.children}</DialogTrigger>
       <DialogPortal>
         <DialogContent className="w-[90%]">
-          <DialogHeader>Novo Produto</DialogHeader>
+          <DialogHeader>
+            {productToUpdate ? 'Editar' : 'Nov0'} Produto
+          </DialogHeader>
           <ProductForm
             ref={formRef}
             onSuccess={() => {
-              setIsOpen(false);
+              setIsProductModalOpen(false);
+              setProductToUpdate(null);
             }}
           ></ProductForm>
           <DialogFooterForm
@@ -40,6 +59,8 @@ export const ProductModal = (props: ProductModalProps) => {
             }}
             onCancel={() => {
               formRef.current?.form.reset(productFormInitialValues);
+              setIsProductModalOpen(false);
+              setProductToUpdate(null);
             }}
           ></DialogFooterForm>
         </DialogContent>

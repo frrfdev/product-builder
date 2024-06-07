@@ -60,7 +60,7 @@ export const columns: ColumnDef<ProductData>[] = [
     ),
     cell: ({ row }) => {
       const product = row.original;
-      return NumberUtils.money(product.price, 2, 'R$', true);
+      return NumberUtils.money(product.price);
     },
   },
   {

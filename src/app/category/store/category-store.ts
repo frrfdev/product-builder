@@ -8,10 +8,12 @@ export type CategoryStore = {
   addCategory: (category: CategoryData) => void;
   removeCategory: (categoryId: string) => void;
   updateCategory: (categoryId: string, category: CategoryData) => void;
-  setCategoryToUpdate: (role: CategoryData) => void;
+  setCategoryToUpdate: (role: CategoryData | null) => void;
   categoryToUpdate: CategoryData | null;
-  setCategoryToDelete: (role: CategoryData) => void;
+  setCategoryToDelete: (role: CategoryData | null) => void;
   categoryToDelete: CategoryData | null;
+  isCategoryModalOpen: boolean;
+  setIsCategoryModalOpen: (isOpen: boolean) => void;
 };
 
 export const useCategoryStore = create<CategoryStore>()(
@@ -20,6 +22,7 @@ export const useCategoryStore = create<CategoryStore>()(
       categories: [],
       categoryToUpdate: null,
       categoryToDelete: null,
+      isCategoryModalOpen: false,
       setCategories: (categories) => set({ categories }),
       addCategory: (category) =>
         set((state) => ({ categories: [...state.categories, category] })),
@@ -37,6 +40,7 @@ export const useCategoryStore = create<CategoryStore>()(
         })),
       setCategoryToUpdate: (categoryToUpdate) => set({ categoryToUpdate }),
       setCategoryToDelete: (categoryToDelete) => set({ categoryToDelete }),
+      setIsCategoryModalOpen: (isOpen) => set({ isCategoryModalOpen: isOpen }),
     }),
     {
       name: 'category-store',

@@ -10,6 +10,7 @@ import {
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 import { useAlertDialog } from '@/components/ui/alert-dialog';
+import { RecipeModal } from './recipe.modal';
 
 type Props = {
   recipe: RecipeData;
@@ -43,9 +44,11 @@ export const RecipeTableActions = (props: Props) => {
     <>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Ações</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleEditRecipe}>
-          Editar Receita
-        </DropdownMenuItem>
+        <RecipeModal>
+          <DropdownMenuItem onClick={handleEditRecipe}>
+            Editar Receita
+          </DropdownMenuItem>
+        </RecipeModal>
         <DropdownMenuItem onClick={handleDeleteRecipe}>
           Deletar Receita
         </DropdownMenuItem>

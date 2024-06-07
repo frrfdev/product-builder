@@ -54,7 +54,7 @@ export const columns: ColumnDef<RecipeData>[] = [
 
         return acc + product.price * ingredient.quantity;
       }, 0);
-      return NumberUtils.money(total, 2, 'R$', true);
+      return NumberUtils.money(total);
     },
   },
   {

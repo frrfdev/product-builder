@@ -10,6 +10,7 @@ import {
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 import { useAlertDialog } from '@/components/ui/alert-dialog';
+import { ProductModal } from './product.modal';
 
 type Props = {
   product: ProductData;
@@ -45,9 +46,11 @@ export const ProductTableActions = (props: Props) => {
     <>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Ações</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleEditProduct}>
-          Editar Produto
-        </DropdownMenuItem>
+        <ProductModal>
+          <DropdownMenuItem onClick={handleEditProduct}>
+            Editar Produto
+          </DropdownMenuItem>
+        </ProductModal>
         <DropdownMenuItem onClick={handleDeleteProduct}>
           Deletar Produto
         </DropdownMenuItem>

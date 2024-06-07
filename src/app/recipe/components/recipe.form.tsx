@@ -1,5 +1,5 @@
-import React, { forwardRef, useImperativeHandle } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { forwardRef, useEffect, useImperativeHandle } from 'react';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { FormItem } from '../../../components/ui/form-item';
 import { Input } from '../../../components/ui/input';
 import { Form } from '../../../components/ui/form';
@@ -16,6 +16,7 @@ import { NumberUtils } from '@/utils/number';
 export type RecipeFormData = {
   name: string;
   ingredients: IngredientData[];
+  id?: string;
 };
 
 export type RecipeFormProps = {
@@ -25,6 +26,7 @@ export type RecipeFormProps = {
 export const recipeFormInitialValues = {
   name: '',
   ingredients: [] as IngredientData[],
+  id: '',
 };
 
 export type RecipeFormRef = BaseFormRef<RecipeFormData>;
@@ -32,6 +34,8 @@ export type RecipeFormRef = BaseFormRef<RecipeFormData>;
 export const RecipeForm = forwardRef<RecipeFormRef, RecipeFormProps>(
   ({ onSuccess }, ref) => {
     const addRecipe = useRecipeStore((state) => state.addRecipe);
+    const updateRecipe = useRecipeStore((state) => state.updateRecipe);
+    const recipeToUpdate = useRecipeStore((state) => state.recipeToUpdate);
     const products = useProductStore((state) => state.products);
 
     const form = useForm({
@@ -42,7 +46,8 @@ export const RecipeForm = forwardRef<RecipeFormRef, RecipeFormProps>(
 
     const submit = () => {
       form.handleSubmit(async (values) => {
-        addRecipe({ ...values, id: getRandomUUID() });
+        if (recipeToUpdate) updateRecipe(recipeToUpdate.id, values);
+        else addRecipe({ ...values, id: getRandomUUID() });
         onSuccess && onSuccess(values);
       })();
     };
@@ -61,9 +66,13 @@ export const RecipeForm = forwardRef<RecipeFormRef, RecipeFormProps>(
     };
 
     useImperativeHandle(ref, () => ({
-      form,
+      form: form as UseFormReturn<RecipeFormData>,
       submit,
     }));
+
+    useEffect(() => {
+      if (recipeToUpdate) form.reset(recipeToUpdate);
+    }, [recipeToUpdate]);
 
     return (
       <Form form={form} onSubmit={submit}>
@@ -118,10 +127,7 @@ export const RecipeForm = forwardRef<RecipeFormRef, RecipeFormProps>(
                     <strong className="leading-[3rem]">
                       Total:{' '}
                       {NumberUtils.money(
-                        (product?.price || 0) * ingredient.quantity,
-                        2,
-                        'R$',
-                        true
+                        (product?.price || 0) * ingredient.quantity
                       )}
                     </strong>
                   </div>

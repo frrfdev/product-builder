@@ -8,10 +8,12 @@ export type RecipeStore = {
   addRecipe: (recipe: RecipeData) => void;
   removeRecipe: (recipeId: string) => void;
   updateRecipe: (recipeId: string, recipe: RecipeData) => void;
-  setRecipeToUpdate: (role: RecipeData) => void;
+  setRecipeToUpdate: (role: RecipeData | null) => void;
   recipeToUpdate: RecipeData | null;
-  setRecipeToDelete: (role: RecipeData) => void;
+  setRecipeToDelete: (role: RecipeData | null) => void;
   recipeToDelete: RecipeData | null;
+  isRecipeModalOpen: boolean;
+  setIsRecipeModalOpen: (isOpen: boolean) => void;
 };
 
 export const useRecipeStore = create<RecipeStore>()(
@@ -20,6 +22,7 @@ export const useRecipeStore = create<RecipeStore>()(
       recipes: [],
       recipeToUpdate: null,
       recipeToDelete: null,
+      isRecipeModalOpen: false,
       setRecipes: (recipes) => set({ recipes }),
       addRecipe: (recipe) =>
         set((state) => ({ recipes: [...state.recipes, recipe] })),
@@ -33,6 +36,7 @@ export const useRecipeStore = create<RecipeStore>()(
         })),
       setRecipeToUpdate: (recipeToUpdate) => set({ recipeToUpdate }),
       setRecipeToDelete: (recipeToDelete) => set({ recipeToDelete }),
+      setIsRecipeModalOpen: (isOpen) => set({ isRecipeModalOpen: isOpen }),
     }),
     {
       name: 'recipe-store',

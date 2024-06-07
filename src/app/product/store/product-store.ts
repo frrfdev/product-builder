@@ -8,10 +8,12 @@ export type ProductStore = {
   addProduct: (product: ProductData) => void;
   removeProduct: (productId: string) => void;
   updateProduct: (productId: string, product: ProductData) => void;
-  setProductToUpdate: (role: ProductData) => void;
+  setProductToUpdate: (role: ProductData | null) => void;
   productToUpdate: ProductData | null;
-  setProductToDelete: (role: ProductData) => void;
+  setProductToDelete: (role: ProductData | null) => void;
   productToDelete: ProductData | null;
+  isProductModalOpen: boolean;
+  setIsProductModalOpen: (isOpen: boolean) => void;
 };
 
 export const useProductStore = create<ProductStore>()(
@@ -20,6 +22,7 @@ export const useProductStore = create<ProductStore>()(
       products: [],
       productToUpdate: null,
       productToDelete: null,
+      isProductModalOpen: false,
       setProducts: (products) => set({ products }),
       addProduct: (product) =>
         set((state) => ({ products: [...state.products, product] })),
@@ -37,6 +40,7 @@ export const useProductStore = create<ProductStore>()(
         })),
       setProductToUpdate: (productToUpdate) => set({ productToUpdate }),
       setProductToDelete: (productToDelete) => set({ productToDelete }),
+      setIsProductModalOpen: (isOpen) => set({ isProductModalOpen: isOpen }),
     }),
     {
       name: 'product-store',
