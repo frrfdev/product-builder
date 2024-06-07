@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { AlertDialogProvider } from '@/components/ui/alert-dialog';
+import { Navbar } from '@/components/navbar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,7 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={cn(inter.className, 'dark:bg-frx-blue-950')}>
-        <AlertDialogProvider>{children}</AlertDialogProvider>
+        <AlertDialogProvider>
+          <div className="flex flex-col">
+            <Navbar></Navbar>
+            <div>{children}</div>
+          </div>
+        </AlertDialogProvider>
       </body>
     </html>
   );

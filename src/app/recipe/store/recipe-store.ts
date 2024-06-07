@@ -4,18 +4,22 @@ import { persist } from 'zustand/middleware';
 
 export type RecipeStore = {
   recipes: RecipeData[];
-  selectedRecipe: RecipeData | null;
   setRecipes: (recipes: RecipeData[]) => void;
   addRecipe: (recipe: RecipeData) => void;
   removeRecipe: (recipeId: string) => void;
   updateRecipe: (recipeId: string, recipe: RecipeData) => void;
+  setRecipeToUpdate: (role: RecipeData) => void;
+  recipeToUpdate: RecipeData | null;
+  setRecipeToDelete: (role: RecipeData) => void;
+  recipeToDelete: RecipeData | null;
 };
 
 export const useRecipeStore = create<RecipeStore>()(
   persist(
     (set) => ({
       recipes: [],
-      selectedRecipe: null,
+      recipeToUpdate: null,
+      recipeToDelete: null,
       setRecipes: (recipes) => set({ recipes }),
       addRecipe: (recipe) =>
         set((state) => ({ recipes: [...state.recipes, recipe] })),
@@ -27,6 +31,8 @@ export const useRecipeStore = create<RecipeStore>()(
         set((state) => ({
           recipes: state.recipes.map((r) => (r.id === recipeId ? recipe : r)),
         })),
+      setRecipeToUpdate: (recipeToUpdate) => set({ recipeToUpdate }),
+      setRecipeToDelete: (recipeToDelete) => set({ recipeToDelete }),
     }),
     {
       name: 'recipe-store',

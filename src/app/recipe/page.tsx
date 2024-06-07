@@ -1,5 +1,5 @@
 import React from 'react';
-import { RecipeFilter } from './components/recipe.filter';
+import { RecipeTable } from './components/recipe.table';
 
 type Props = {};
 
@@ -7,7 +7,7 @@ const RecipePage = (props: Props) => {
   return (
     <div>
       ProductPage
-      <RecipeFilter />
+      <RecipeTable />
     </div>
   );
 };

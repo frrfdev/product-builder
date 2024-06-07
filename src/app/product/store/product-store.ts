@@ -8,12 +8,18 @@ export type ProductStore = {
   addProduct: (product: ProductData) => void;
   removeProduct: (productId: string) => void;
   updateProduct: (productId: string, product: ProductData) => void;
+  setProductToUpdate: (role: ProductData) => void;
+  productToUpdate: ProductData | null;
+  setProductToDelete: (role: ProductData) => void;
+  productToDelete: ProductData | null;
 };
 
 export const useProductStore = create<ProductStore>()(
   persist(
     (set) => ({
       products: [],
+      productToUpdate: null,
+      productToDelete: null,
       setProducts: (products) => set({ products }),
       addProduct: (product) =>
         set((state) => ({ products: [...state.products, product] })),
@@ -29,6 +35,8 @@ export const useProductStore = create<ProductStore>()(
             p.id === productId ? product : p
           ),
         })),
+      setProductToUpdate: (productToUpdate) => set({ productToUpdate }),
+      setProductToDelete: (productToDelete) => set({ productToDelete }),
     }),
     {
       name: 'product-store',

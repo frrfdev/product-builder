@@ -9,6 +9,9 @@ import { getRandomUUID } from '@/utils/crypto';
 import { Button } from '@/components/ui/button';
 import { Trash } from 'lucide-react';
 import { useRecipeStore } from '../store/recipe-store';
+import { ProductSelect } from '@/app/product/components/product.select';
+import { useProductStore } from '@/app/product/store/product-store';
+import { NumberUtils } from '@/utils/number';
 
 export type RecipeFormData = {
   name: string;
@@ -29,6 +32,7 @@ export type RecipeFormRef = BaseFormRef<RecipeFormData>;
 export const RecipeForm = forwardRef<RecipeFormRef, RecipeFormProps>(
   ({ onSuccess }, ref) => {
     const addRecipe = useRecipeStore((state) => state.addRecipe);
+    const products = useProductStore((state) => state.products);
 
     const form = useForm({
       defaultValues: recipeFormInitialValues,
@@ -78,34 +82,52 @@ export const RecipeForm = forwardRef<RecipeFormRef, RecipeFormProps>(
           </div>
 
           <div className="p-4">
-            {ingredients.map((ingredient, index) => (
-              <div key={ingredient.id} className="flex gap-2 items-end ">
-                <FormItem
-                  key={index}
-                  name={`ingredients.${index}.productId`}
-                  defaultValue={ingredient.productId}
-                  label="Produto"
-                >
-                  <Input></Input>
-                </FormItem>
-                <FormItem
-                  key={index}
-                  name={`ingredients.${index}.quantity`}
-                  defaultValue={ingredient.quantity}
-                  label="Quantidade"
-                >
-                  <Input></Input>
-                </FormItem>
+            {ingredients.map((ingredient, index) => {
+              const product = products.find(
+                (product) => product.id === ingredient.productId
+              );
 
-                <Button
-                  type="button"
-                  className="h-12"
-                  onClick={() => handleRemoveIngredient(ingredient.id)}
-                >
-                  <Trash></Trash>
-                </Button>
-              </div>
-            ))}
+              return (
+                <div key={ingredient.id} className="flex gap-2 items-end ">
+                  <FormItem
+                    key={index}
+                    name={`ingredients.${index}.productId`}
+                    defaultValue={ingredient.productId}
+                    label="Produto"
+                  >
+                    <ProductSelect></ProductSelect>
+                  </FormItem>
+                  <FormItem
+                    key={index}
+                    name={`ingredients.${index}.quantity`}
+                    defaultValue={ingredient.quantity}
+                    label="Quantidade"
+                  >
+                    <Input type="number"></Input>
+                  </FormItem>
+
+                  <Button
+                    type="button"
+                    className="h-12"
+                    onClick={() => handleRemoveIngredient(ingredient.id)}
+                  >
+                    <Trash></Trash>
+                  </Button>
+
+                  <div>
+                    <strong className="leading-[3rem]">
+                      Total:{' '}
+                      {NumberUtils.money(
+                        (product?.price || 0) * ingredient.quantity,
+                        2,
+                        'R$',
+                        true
+                      )}
+                    </strong>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </Form>

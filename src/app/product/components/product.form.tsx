@@ -1,11 +1,15 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { useForm } from 'react-hook-form';
 import { FormItem } from '../../../components/ui/form-item';
-import { Input } from '../../../components/ui/input';
+import { Input, InputMoney } from '../../../components/ui/input';
 import { Form } from '../../../components/ui/form';
 import { BaseFormRef } from '@/types/BaseFormRef';
 import { useProductStore } from '../store/product-store';
 import { getRandomUUID } from '@/utils/crypto';
+import { CategorySelect } from '@/app/category/components/category.select';
+import { CategoryModal } from '@/app/category/components/category.modal';
+import { FlatButton } from '@/components/ui/button';
+import { NumberUtils } from '@/utils/number';
 
 export type ProductFormData = {
   name: string;
@@ -51,12 +55,24 @@ export const ProductForm = forwardRef<ProductFormRef, ProductFormProps>(
           <Input></Input>
         </FormItem>
 
-        <FormItem name="categoryId" label="Categoria">
-          <Input></Input>
-        </FormItem>
+        <div className="flex gap-2 items-end">
+          <FormItem name="categoryId" label="Categoria">
+            <CategorySelect></CategorySelect>
+          </FormItem>
+          <CategoryModal>
+            <FlatButton className="w-min">Nova Categoria</FlatButton>
+          </CategoryModal>
+        </div>
 
-        <FormItem name="price" label="Preço por g/ml">
-          <Input></Input>
+        <FormItem
+          name="price"
+          label="Preço por g/ml"
+          rules={{
+            setValueAs: (value: string) =>
+              Number(NumberUtils.moneyToNumber(value)),
+          }}
+        >
+          <InputMoney />
         </FormItem>
       </Form>
     );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProductFilter } from './components/product.filter';
+import { ProductTable } from './components/product.table';
 
 type Props = {};
 
@@ -7,7 +7,7 @@ const ProductPage = (props: Props) => {
   return (
     <div>
       ProductPage
-      <ProductFilter />
+      <ProductTable />
     </div>
   );
 };
