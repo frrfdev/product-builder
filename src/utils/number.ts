@@ -7,15 +7,12 @@ export const NumberUtils = {
       maximumFractionDigits: 5,
     }).format(Number(value));
   },
-  toNumber: (
-    value: string | undefined,
-    decimals: number | null = 2,
-    emptyZeros = true
-  ): number | undefined => {
+  toNumber: (value: string | undefined, decimals: number | null = 2, emptyZeros = true): number | undefined => {
+    console.log(value);
     const numbers = (value || 0).toString().replace(/\D/g, '');
 
     if (Number(numbers) === 0) {
-      return emptyZeros ? undefined : 0;
+      return emptyZeros ? 0 : 0;
     }
 
     if (decimals !== null) {

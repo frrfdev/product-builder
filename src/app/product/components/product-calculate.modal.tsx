@@ -62,7 +62,7 @@ const UNITS = [
 ];
 
 const productCalculateModalFormInitialValues = {
-  purchasePrice: 0,
+  purchasePrice: '0',
   unit: '',
   quantity: 0,
 };
@@ -101,9 +101,12 @@ export const ProductCalculateModal = (props: Props) => {
 
   const submit = () => {
     form.handleSubmit((values) => {
-      const price = calculateUnitPrice(values);
+      console.log(values);
+      const price = calculateUnitPrice({ ...values, purchasePrice: NumberUtils.toNumber(values.purchasePrice) });
+      console.log(price);
       props.onSuccess && props.onSuccess(price);
       setIsOpen(false);
+      form.reset(productCalculateModalFormInitialValues);
     })();
   };
 
@@ -112,7 +115,10 @@ export const ProductCalculateModal = (props: Props) => {
       open={isOpen}
       onOpenChange={(value) => {
         setIsOpen(value);
-        if (!value) form.reset(productCalculateModalFormInitialValues);
+        if (!value) {
+          form.reset(productCalculateModalFormInitialValues);
+          form.clearErrors();
+        }
       }}
     >
       <DialogTrigger>{props.children}</DialogTrigger>

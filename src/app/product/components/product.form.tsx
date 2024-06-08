@@ -33,73 +33,80 @@ export const productFormInitialValues = {
 
 export type ProductFormRef = BaseFormRef<ProductFormData>;
 
-export const ProductForm = forwardRef<ProductFormRef, ProductFormProps>(
-  ({ onSuccess }, ref) => {
-    const addProduct = useProductStore((state) => state.addProduct);
-    const updateProduct = useProductStore((state) => state.updateProduct);
-    const productToUpdate = useProductStore((state) => state.productToUpdate);
+export const ProductForm = forwardRef<ProductFormRef, ProductFormProps>(({ onSuccess }, ref) => {
+  const addProduct = useProductStore((state) => state.addProduct);
+  const updateProduct = useProductStore((state) => state.updateProduct);
+  const productToUpdate = useProductStore((state) => state.productToUpdate);
 
-    const form = useForm({
-      defaultValues: productFormInitialValues,
-    });
+  const form = useForm({
+    defaultValues: productFormInitialValues,
+  });
 
-    const submit = () => {
-      form.handleSubmit(async (values) => {
-        if (productToUpdate) updateProduct(productToUpdate.id, values);
-        else addProduct({ ...values, id: getRandomUUID() });
-        onSuccess && onSuccess(values);
-      })();
+  const submit = () => {
+    form.handleSubmit(async (values) => {
+      if (productToUpdate) updateProduct(productToUpdate.id, values);
+      else addProduct({ ...values, id: getRandomUUID() });
+      onSuccess && onSuccess(values);
+    })();
+  };
+
+  useImperativeHandle(ref, () => ({
+    form: form as UseFormReturn<ProductFormData>,
+    submit,
+  }));
+
+  useEffect(() => {
+    form.unregister('price');
+    if (productToUpdate) form.reset(productToUpdate);
+    form.register('price');
+  }, [productToUpdate]);
+
+  useEffect(() => {
+    form.register('price');
+    return () => {
+      form.unregister('price');
     };
+  }, []);
 
-    useImperativeHandle(ref, () => ({
-      form: form as UseFormReturn<ProductFormData>,
-      submit,
-    }));
+  return (
+    <Form form={form} onSubmit={submit}>
+      <FormItem name="name" label="Nome">
+        <Input></Input>
+      </FormItem>
 
-    useEffect(() => {
-      if (productToUpdate) form.reset(productToUpdate);
-    }, [productToUpdate]);
-
-    return (
-      <Form form={form} onSubmit={submit}>
-        <FormItem name="name" label="Nome">
-          <Input></Input>
+      <div className="flex gap-2 items-end">
+        <FormItem name="categoryId" label="Categoria">
+          <CategorySelect></CategorySelect>
         </FormItem>
+        <CategoryModal>
+          <FlatButton className="w-min">Nova Categoria</FlatButton>
+        </CategoryModal>
+      </div>
 
-        <div className="flex gap-2 items-end">
-          <FormItem name="categoryId" label="Categoria">
-            <CategorySelect></CategorySelect>
-          </FormItem>
-          <CategoryModal>
-            <FlatButton className="w-min">Nova Categoria</FlatButton>
-          </CategoryModal>
-        </div>
-
-        <div className="flex gap-2 items-end">
-          <FormItem
-            name="price"
-            label="Preço por g/ml"
-            rules={{
-              setValueAs: (val) => {
-                if (typeof val === 'number') return val;
-                return NumberUtils.toNumber(val);
-              },
-            }}
-          >
-            <InputMoney />
-          </FormItem>
-          <ProductCalculateModal
-            onSuccess={(price) => {
-              form.setValue('price', price);
-            }}
-          >
-            <Button type="button">
-              <Calculator></Calculator>
-            </Button>
-          </ProductCalculateModal>
-        </div>
-      </Form>
-    );
-  }
-);
+      <div className="flex gap-2 items-end">
+        <FormItem
+          name="price"
+          label="Preço por g/ml"
+          rules={{
+            setValueAs: (val) => {
+              if (typeof val === 'number') return val;
+              return NumberUtils.toNumber(val);
+            },
+          }}
+        >
+          <InputMoney />
+        </FormItem>
+        <ProductCalculateModal
+          onSuccess={(price) => {
+            form.setValue('price', price);
+          }}
+        >
+          <Button type="button">
+            <Calculator></Calculator>
+          </Button>
+        </ProductCalculateModal>
+      </div>
+    </Form>
+  );
+});
 ProductForm.displayName = 'ProductForm';
