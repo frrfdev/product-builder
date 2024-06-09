@@ -7,11 +7,7 @@ import {
   DialogPortal,
   DialogTrigger,
 } from '../../../components/ui/dialog';
-import {
-  ProductForm,
-  productFormInitialValues,
-  ProductFormRef,
-} from './product.form';
+import { ProductForm, productFormInitialValues, ProductFormRef } from './product.form';
 import { useProductStore } from '../store/product-store';
 
 type ProductModalProps = {
@@ -21,15 +17,9 @@ type ProductModalProps = {
 export const ProductModal = (props: ProductModalProps) => {
   const formRef = useRef<ProductFormRef>(null);
 
-  const isProductModalOpen = useProductStore(
-    (state) => state.isProductModalOpen
-  );
-  const setIsProductModalOpen = useProductStore(
-    (state) => state.setIsProductModalOpen
-  );
-  const setProductToUpdate = useProductStore(
-    (state) => state.setProductToUpdate
-  );
+  const isProductModalOpen = useProductStore((state) => state.isProductModalOpen);
+  const setIsProductModalOpen = useProductStore((state) => state.setIsProductModalOpen);
+  const setProductToUpdate = useProductStore((state) => state.setProductToUpdate);
   const productToUpdate = useProductStore((state) => state.productToUpdate);
 
   return (
@@ -42,10 +32,8 @@ export const ProductModal = (props: ProductModalProps) => {
     >
       <DialogTrigger>{props.children}</DialogTrigger>
       <DialogPortal>
-        <DialogContent className="w-[90%]">
-          <DialogHeader>
-            {productToUpdate ? 'Editar' : 'Nov0'} Produto
-          </DialogHeader>
+        <DialogContent className="w-[30%]">
+          <DialogHeader>{productToUpdate ? 'Editar' : 'Novo'} Produto</DialogHeader>
           <ProductForm
             ref={formRef}
             onSuccess={() => {

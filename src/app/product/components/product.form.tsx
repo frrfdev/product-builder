@@ -12,12 +12,14 @@ import { Button, FlatButton } from '@/components/ui/button';
 import { NumberUtils } from '@/utils/number';
 import { Calculator } from 'lucide-react';
 import { ProductCalculateModal } from './product-calculate.modal';
+import ProfilePicker from '@/components/ui/profile-picker';
 
 export type ProductFormData = {
   name: string;
   categoryId: string;
   price: number;
   id?: string;
+  profileImage?: File | null | string;
 };
 
 export type ProductFormProps = {
@@ -29,6 +31,7 @@ export const productFormInitialValues = {
   categoryId: '',
   price: 0,
   id: '',
+  profileImage: null as any as File | null | undefined,
 };
 
 export type ProductFormRef = BaseFormRef<ProductFormData>;
@@ -44,9 +47,10 @@ export const ProductForm = forwardRef<ProductFormRef, ProductFormProps>(({ onSuc
 
   const submit = () => {
     form.handleSubmit(async (values) => {
-      if (productToUpdate) updateProduct(productToUpdate.id, values);
-      else addProduct({ ...values, id: getRandomUUID() });
-      onSuccess && onSuccess(values);
+      const newValues = { ...values, price: NumberUtils.toNumber(values.price?.toString() || '0') || 0 };
+      if (productToUpdate) updateProduct(productToUpdate.id, newValues);
+      else addProduct({ ...newValues, id: getRandomUUID() });
+      onSuccess && onSuccess(newValues);
     })();
   };
 
@@ -70,6 +74,20 @@ export const ProductForm = forwardRef<ProductFormRef, ProductFormProps>(({ onSuc
 
   return (
     <Form form={form} onSubmit={submit}>
+      {/* <FormItem
+        name="profileImage"
+        className="margin-auto margin-0"
+        rules={{
+          validate: (fieldValue: File) => {
+            if (fieldValue && fieldValue.size / 1024 > 200) {
+              return 'Arquivo muito grande!';
+            }
+          },
+        }}
+      >
+        <ProfilePicker></ProfilePicker>
+      </FormItem> */}
+
       <FormItem name="name" label="Nome">
         <Input></Input>
       </FormItem>

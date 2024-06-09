@@ -3,4 +3,5 @@ export type ProductData = {
   id: string;
   categoryId: string;
   price: number;
+  profileImage: File | null | undefined;
 };

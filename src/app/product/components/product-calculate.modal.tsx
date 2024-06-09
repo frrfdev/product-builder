@@ -53,7 +53,7 @@ const UNITS = [
   },
   {
     label: 'Mililitro',
-    value: 'ml',
+    value: 'mll',
   },
   {
     label: 'Milimetro',
@@ -85,13 +85,13 @@ export const ProductCalculateModal = (props: Props) => {
       case 'l':
         return values.purchasePrice / values.quantity / 1000;
       case 'g':
-        return values.purchasePrice / values.quantity / 1000;
+        return values.purchasePrice / values.quantity;
       case 'm':
         return values.purchasePrice / values.quantity;
       case 'cm':
         return values.purchasePrice / values.quantity / 100;
-      case 'ml':
-        return values.purchasePrice / values.quantity / 1000;
+      case 'mll':
+        return values.purchasePrice / values.quantity;
       case 'mm':
         return values.purchasePrice / values.quantity / 1000;
       default:
