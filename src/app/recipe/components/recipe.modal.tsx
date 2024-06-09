@@ -38,7 +38,7 @@ export const RecipeModal = (props: RecipeModalProps) => {
     >
       <DialogTrigger>{props.children}</DialogTrigger>
       <DialogPortal>
-        <DialogContent className="w-[90%]">
+        <DialogContent className="lg:w-[40%] w-[90%]">
           <DialogHeader>
             {recipeToUpdate ? 'Editar' : 'Nova'} Receita
           </DialogHeader>

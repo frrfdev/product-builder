@@ -218,7 +218,7 @@ const Combo = <T extends OptionData>(
         >
           <span
             className={cn(
-              'text-gray-500 text-sm overflow-hidden overflow-ellipsis whitespace-nowrap',
+              'text-gray-300 text-sm overflow-hidden overflow-ellipsis whitespace-nowrap',
               placeholder && !selectedOption ? 'text-gray-400' : ''
             )}
           >
@@ -231,10 +231,10 @@ const Combo = <T extends OptionData>(
               onClick={resetValue}
               type="button"
               aria-label="clear"
-              className="focus:text-red-600 opacity-50 focus:opacity-100"
+              className="focus:text-red-600 opacity-50 focus:opacity-100 w-min focus-visible:ring-0 border-0"
               title="Limpar"
             >
-              <X className="ml-2 h-4 w-4 shrink-0" />
+              <X className="h-4 w-4 shrink-0" />
             </button>
           ) : (
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -242,17 +242,18 @@ const Combo = <T extends OptionData>(
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[--radix-popover-content-available-height] p-0">
-        <Command shouldFilter={false}>
+        <Command shouldFilter={false} className=" bg-frx-blue-950">
           <CommandInput
             placeholder={searchPlaceholder}
             onValueChange={handleFilter}
             value={searchText}
+            className="text-white"
           />
           <CommandEmpty>
             {emptyMessage ||
               (isLoading || isTyping ? `Carregando...` : 'Nada para mostrar')}
           </CommandEmpty>
-          <CommandGroup className="max-h-[90px] flex flex-col w-full overflow-y-auto">
+          <CommandGroup className="max-h-[300px] flex flex-col w-full overflow-y-auto">
             <CommandList className="w-full h-full max-h-full">
               {[
                 initialOptions.find((option) => option.value === value),

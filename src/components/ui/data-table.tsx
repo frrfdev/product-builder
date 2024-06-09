@@ -31,6 +31,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   newButton?: React.ReactNode;
+  canConfigureColumns?: boolean;
 }
 
 const DEFAULT_REACT_TABLE_COLUMN_WIDHT = 150;
@@ -39,6 +40,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   newButton,
+  canConfigureColumns,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -75,9 +77,9 @@ export function DataTable<TData, TValue>({
     return {
       ...styles,
       boxShadow: isLastLeftPinnedColumn
-        ? '-4px 0 4px -4px gray inset'
+        ? '-4px 0 4px -4px rgba(255,255,255,0.1) inset'
         : isFirstRightPinnedColumn
-        ? '4px 0 4px -4px gray inset'
+        ? '4px 0 4px -4px rgba(255,255,255,0.1) inset'
         : undefined,
       left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
       right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
@@ -92,7 +94,7 @@ export function DataTable<TData, TValue>({
     <div className="h-full grid auto-rows-max">
       <div className="flex items-center py-4 justify-between">
         <Input
-          placeholder="Filter..."
+          placeholder="Filtrar..."
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
@@ -101,12 +103,12 @@ export function DataTable<TData, TValue>({
         />
         <div className="flex gap-1">
           {newButton && newButton}
-          <DataTableViewOptions table={table} />
+          {canConfigureColumns ? <DataTableViewOptions table={table} /> : null}
         </div>
       </div>
-      <ScrollArea className=" border rounded-md shrink dark:border-frx-blue-800">
+      <ScrollArea className=" rounded-md shrink dark:bg-frx-blue-900">
         <Table>
-          <TableHeader>
+          <TableHeader className="hover:bg-frx-blue-800">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -122,8 +124,9 @@ export function DataTable<TData, TValue>({
                         customClass,
                         header.column.getIsPinned() ||
                           (header.column.id === 'actions' ? 'right' : '')
-                          ? 'bg-frx-blue-950'
-                          : ''
+                          ? 'bg-frx-blue-900'
+                          : '',
+                        'shadow-md border-0'
                       )}
                       data-action={!!customClass}
                       style={{ ...getCommonPinningStyles(header.column) }}
@@ -140,12 +143,13 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
+          <TableBody className="">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  className="hover:bg-frx-blue-800 even:bg-frx-blue-900 odd:bg-frx-blue-850/30 border-0"
                 >
                   {row.getVisibleCells().map((cell) => {
                     const customClass =
@@ -160,7 +164,7 @@ export function DataTable<TData, TValue>({
                           customClass,
                           cell.column.getIsPinned() ||
                             (cell.column.id === 'actions' ? 'right' : '')
-                            ? 'bg-frx-blue-950'
+                            ? 'bg-frx-blue-900'
                             : ''
                         )}
                         data-action={!!customClass}

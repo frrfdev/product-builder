@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { FormItem } from '../../../components/ui/form-item';
-import { Input } from '../../../components/ui/input';
+import { Input, InputMoney } from '../../../components/ui/input';
 import { Form } from '../../../components/ui/form';
 import { BaseFormRef } from '@/types/BaseFormRef';
 import { IngredientData } from '@/types/IngredientData';
@@ -90,47 +90,62 @@ export const RecipeForm = forwardRef<RecipeFormRef, RecipeFormProps>(
             </Button>
           </div>
 
-          <div className="p-4">
+          <div className="p-4 flex flex-col gap-5">
             {ingredients.map((ingredient, index) => {
               const product = products.find(
                 (product) => product.id === ingredient.productId
               );
 
               return (
-                <div key={ingredient.id} className="flex gap-2 items-end ">
+                <div
+                  key={ingredient.id}
+                  className="flex gap-2 items-end flex-wrap"
+                >
                   <FormItem
                     key={index}
                     name={`ingredients.${index}.productId`}
                     defaultValue={ingredient.productId}
                     label="Produto"
+                    className="w-full basis-[35%] grow"
                   >
-                    <ProductSelect></ProductSelect>
+                    <ProductSelect className="w-full"></ProductSelect>
                   </FormItem>
                   <FormItem
                     key={index}
                     name={`ingredients.${index}.quantity`}
                     defaultValue={ingredient.quantity}
                     label="Quantidade"
+                    className="w-full basis-[35%] grow"
                   >
                     <Input type="number"></Input>
                   </FormItem>
 
+                  <div className=" basis-[40%] grow">
+                    <label className="w-full flex flex-col" title="Total">
+                      <div className="whitespace-nowrap overflow-hidden overflow-ellipsis w-full flex gap-1">
+                        <span className="max-w-fit whitespace-nowrap overflow-hidden overflow-ellipsis">
+                          Total
+                        </span>
+                      </div>
+                    </label>
+                    <div>
+                      <Input
+                        value={NumberUtils.money(
+                          (product?.price || 0) * ingredient.quantity
+                        )}
+                        disabled
+                        className="disabled:opacity-40"
+                      />
+                    </div>
+                  </div>
+
                   <Button
                     type="button"
-                    className="h-12"
+                    className="h-12 basis-[10%]"
                     onClick={() => handleRemoveIngredient(ingredient.id)}
                   >
                     <Trash></Trash>
                   </Button>
-
-                  <div>
-                    <strong className="leading-[3rem]">
-                      Total:{' '}
-                      {NumberUtils.money(
-                        (product?.price || 0) * ingredient.quantity
-                      )}
-                    </strong>
-                  </div>
                 </div>
               );
             })}

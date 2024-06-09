@@ -22,12 +22,16 @@ type Props = {};
 const TableButtons = {
   newButtonOnData: (
     <RecipeModal>
-      <FlatButton className="w-min">Nova Receita</FlatButton>
+      <FlatButton className="w-min" variant="destructive">
+        Nova Receita
+      </FlatButton>
     </RecipeModal>
   ),
   newButtonOnEmpty: (
     <RecipeModal>
-      <FlatButton className="w-min">Nova Receita</FlatButton>
+      <FlatButton className="w-min" variant="destructive">
+        Nova Receita
+      </FlatButton>
     </RecipeModal>
   ),
 };
@@ -36,7 +40,7 @@ export const columns: ColumnDef<RecipeData>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
+      <DataTableColumnHeader column={column} title="Nome" />
     ),
   },
   {
@@ -67,7 +71,7 @@ export const columns: ColumnDef<RecipeData>[] = [
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">Abrir menu</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>

@@ -7,6 +7,7 @@ import {
 import { useProductStore } from '@/app/product/store/product-store';
 import { SelectUtils } from '@/utils/select';
 import { ProductData } from '@/types/ProductData';
+import { cn } from '@/lib/utils';
 
 type Props<T = unknown> = Omit<ComboBoxProps<T>, 'options'>;
 
@@ -21,7 +22,7 @@ export const ProductSelect = forwardRef(
       <ComboBox
         {...props}
         ref={ref}
-        className="h-12"
+        className={cn('h-12', props.className)}
         options={SelectUtils.selectOptionArray(products)}
       ></ComboBox>
     );

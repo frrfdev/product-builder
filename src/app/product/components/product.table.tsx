@@ -22,12 +22,16 @@ type Props = {};
 const TableButtons = {
   newButtonOnData: (
     <ProductModal>
-      <FlatButton className="w-min">Novo Produto</FlatButton>
+      <FlatButton className="w-min" variant="destructive">
+        Novo Produto
+      </FlatButton>
     </ProductModal>
   ),
   newButtonOnEmpty: (
     <ProductModal>
-      <FlatButton className="w-min">Novo Produto</FlatButton>
+      <FlatButton className="w-min" variant="destructive">
+        Novo Produto
+      </FlatButton>
     </ProductModal>
   ),
 };
@@ -36,7 +40,7 @@ export const columns: ColumnDef<ProductData>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
+      <DataTableColumnHeader column={column} title="Nome" />
     ),
   },
   {
@@ -52,9 +56,32 @@ export const columns: ColumnDef<ProductData>[] = [
       if (!category) return 'Categoria não encontrada';
       return category.name;
     },
+    filterFn: (row, _, filterValue) => {
+      const product = row.original;
+      const category = useCategoryStore
+        .getState()
+        .categories.find((category) => category.id === product.categoryId);
+      return !!category?.name.toLowerCase().includes(filterValue.toLowerCase());
+    },
+    sortingFn: (a, b) => {
+      const rowA = a.original;
+      const rowB = b.original;
+
+      const categoryA = useCategoryStore
+        .getState()
+        .categories.find((category) => category.id === rowA.categoryId);
+      const categoryB = useCategoryStore
+        .getState()
+        .categories.find((category) => category.id === rowB.categoryId);
+
+      if (!categoryA || !categoryB) return 0;
+
+      return categoryA.name.localeCompare(categoryB.name);
+    },
   },
   {
     accessorKey: 'price',
+    enableColumnFilter: false,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Preço" />
     ),
@@ -73,7 +100,7 @@ export const columns: ColumnDef<ProductData>[] = [
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">Abrir menu</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
