@@ -23,42 +23,39 @@ export const categoryFormInitialValues = {
 
 export type CategoryFormRef = BaseFormRef<CategoryFormData>;
 
-export const CategoryForm = forwardRef<CategoryFormRef, CategoryFormProps>(
-  ({ onSuccess }, ref) => {
-    const addCategory = useCategoryStore((state) => state.addCategory);
-    const updateCategory = useCategoryStore((state) => state.updateCategory);
-    const categoryToUpdate = useCategoryStore(
-      (state) => state.categoryToUpdate
-    );
+export const CategoryForm = forwardRef<CategoryFormRef, CategoryFormProps>(({ onSuccess }, ref) => {
+  const addCategory = useCategoryStore((state) => state.addCategory);
+  const updateCategory = useCategoryStore((state) => state.updateCategory);
+  const categoryToUpdate = useCategoryStore((state) => state.categoryToUpdate);
 
-    const form = useForm({
-      defaultValues: categoryFormInitialValues,
-    });
+  const form = useForm({
+    defaultValues: categoryFormInitialValues,
+  });
 
-    const submit = () => {
-      form.handleSubmit(async (values) => {
-        if (categoryToUpdate) updateCategory(categoryToUpdate.id, values);
-        else addCategory({ ...values, id: getRandomUUID() });
+  const submit = () => {
+    form.handleSubmit(async (values) => {
+      if (categoryToUpdate) {
+        updateCategory(categoryToUpdate.id, values);
         onSuccess && onSuccess(values);
-      })();
-    };
+      } else addCategory({ ...values, id: getRandomUUID() });
+    })();
+  };
 
-    useImperativeHandle(ref, () => ({
-      form: form as UseFormReturn<CategoryFormData>,
-      submit,
-    }));
+  useImperativeHandle(ref, () => ({
+    form: form as UseFormReturn<CategoryFormData>,
+    submit,
+  }));
 
-    useEffect(() => {
-      if (categoryToUpdate) form.reset(categoryToUpdate);
-    }, [categoryToUpdate]);
+  useEffect(() => {
+    if (categoryToUpdate) form.reset(categoryToUpdate);
+  }, [categoryToUpdate]);
 
-    return (
-      <Form form={form} onSubmit={submit}>
-        <FormItem name="name" label="Nome" rules={{ required: true }}>
-          <Input></Input>
-        </FormItem>
-      </Form>
-    );
-  }
-);
+  return (
+    <Form form={form} onSubmit={submit}>
+      <FormItem name="name" label="Nome" rules={{ required: true }}>
+        <Input></Input>
+      </FormItem>
+    </Form>
+  );
+});
 CategoryForm.displayName = 'CategoryForm';

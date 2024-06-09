@@ -48,9 +48,10 @@ export const ProductForm = forwardRef<ProductFormRef, ProductFormProps>(({ onSuc
   const submit = () => {
     form.handleSubmit(async (values) => {
       const newValues = { ...values, price: NumberUtils.toNumber(values.price?.toString() || '0') || 0 };
-      if (productToUpdate) updateProduct(productToUpdate.id, newValues);
-      else addProduct({ ...newValues, id: getRandomUUID() });
-      onSuccess && onSuccess(newValues);
+      if (productToUpdate) {
+        updateProduct(productToUpdate.id, newValues);
+        onSuccess && onSuccess(newValues);
+      } else addProduct({ ...newValues, id: getRandomUUID() });
     })();
   };
 

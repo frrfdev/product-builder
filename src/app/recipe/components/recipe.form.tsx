@@ -31,128 +31,113 @@ export const recipeFormInitialValues = {
 
 export type RecipeFormRef = BaseFormRef<RecipeFormData>;
 
-export const RecipeForm = forwardRef<RecipeFormRef, RecipeFormProps>(
-  ({ onSuccess }, ref) => {
-    const addRecipe = useRecipeStore((state) => state.addRecipe);
-    const updateRecipe = useRecipeStore((state) => state.updateRecipe);
-    const recipeToUpdate = useRecipeStore((state) => state.recipeToUpdate);
-    const products = useProductStore((state) => state.products);
+export const RecipeForm = forwardRef<RecipeFormRef, RecipeFormProps>(({ onSuccess }, ref) => {
+  const addRecipe = useRecipeStore((state) => state.addRecipe);
+  const updateRecipe = useRecipeStore((state) => state.updateRecipe);
+  const recipeToUpdate = useRecipeStore((state) => state.recipeToUpdate);
+  const products = useProductStore((state) => state.products);
 
-    const form = useForm({
-      defaultValues: recipeFormInitialValues,
-    });
+  const form = useForm({
+    defaultValues: recipeFormInitialValues,
+  });
 
-    const ingredients = form.watch('ingredients');
+  const ingredients = form.watch('ingredients');
 
-    const submit = () => {
-      form.handleSubmit(async (values) => {
-        if (recipeToUpdate) updateRecipe(recipeToUpdate.id, values);
-        else addRecipe({ ...values, id: getRandomUUID() });
+  const submit = () => {
+    form.handleSubmit(async (values) => {
+      if (recipeToUpdate) {
+        updateRecipe(recipeToUpdate.id, values);
         onSuccess && onSuccess(values);
-      })();
-    };
+      } else addRecipe({ ...values, id: getRandomUUID() });
+    })();
+  };
 
-    const handleAddNewIngredient = () => {
-      form.setValue('ingredients', [
-        ...ingredients,
-        { productId: '', quantity: 0, id: 'new-' + getRandomUUID() },
-      ]);
-    };
+  const handleAddNewIngredient = () => {
+    form.setValue('ingredients', [...ingredients, { productId: '', quantity: 0, id: 'new-' + getRandomUUID() }]);
+  };
 
-    const handleRemoveIngredient = (ingredientId: string) => {
-      form.setValue('ingredients', [
-        ...ingredients.filter((ingredient) => ingredient.id !== ingredientId),
-      ]);
-    };
+  const handleRemoveIngredient = (ingredientId: string) => {
+    form.setValue('ingredients', [...ingredients.filter((ingredient) => ingredient.id !== ingredientId)]);
+  };
 
-    useImperativeHandle(ref, () => ({
-      form: form as UseFormReturn<RecipeFormData>,
-      submit,
-    }));
+  useImperativeHandle(ref, () => ({
+    form: form as UseFormReturn<RecipeFormData>,
+    submit,
+  }));
 
-    useEffect(() => {
-      if (recipeToUpdate) form.reset(recipeToUpdate);
-    }, [recipeToUpdate]);
+  useEffect(() => {
+    if (recipeToUpdate) form.reset(recipeToUpdate);
+  }, [recipeToUpdate]);
 
-    return (
-      <Form form={form} onSubmit={submit}>
-        <div className="flex gap-2 items-end">
-          <FormItem name="name" label="Nome" className="w-full">
-            <Input></Input>
-          </FormItem>
+  return (
+    <Form form={form} onSubmit={submit}>
+      <div className="flex gap-2 items-end">
+        <FormItem name="name" label="Nome" className="w-full">
+          <Input></Input>
+        </FormItem>
+      </div>
+
+      <div className="flex flex-col gap-2 mt-4 bg-frx-blue-800/10 rounded-md">
+        <div className="flex gap-2 bg-frx-blue-800/10 p-2 items-center">
+          <span className="w-full text-md font-bold">Ingredientes</span>
+          <Button type="button" onClick={handleAddNewIngredient}>
+            Adicionar Ingrediente
+          </Button>
         </div>
 
-        <div className="flex flex-col gap-2 mt-4 bg-frx-blue-800/10 rounded-md">
-          <div className="flex gap-2 bg-frx-blue-800/10 p-2 items-center">
-            <span className="w-full text-md font-bold">Ingredientes</span>
-            <Button type="button" onClick={handleAddNewIngredient}>
-              Adicionar Ingrediente
-            </Button>
-          </div>
+        <div className="p-4 flex flex-col gap-5">
+          {ingredients.map((ingredient, index) => {
+            const product = products.find((product) => product.id === ingredient.productId);
 
-          <div className="p-4 flex flex-col gap-5">
-            {ingredients.map((ingredient, index) => {
-              const product = products.find(
-                (product) => product.id === ingredient.productId
-              );
-
-              return (
-                <div
-                  key={ingredient.id}
-                  className="flex gap-2 items-end flex-wrap"
+            return (
+              <div key={ingredient.id} className="flex gap-2 items-end flex-wrap">
+                <FormItem
+                  key={index}
+                  name={`ingredients.${index}.productId`}
+                  defaultValue={ingredient.productId}
+                  label="Produto"
+                  className="w-full basis-[35%] grow"
                 >
-                  <FormItem
-                    key={index}
-                    name={`ingredients.${index}.productId`}
-                    defaultValue={ingredient.productId}
-                    label="Produto"
-                    className="w-full basis-[35%] grow"
-                  >
-                    <ProductSelect className="w-full"></ProductSelect>
-                  </FormItem>
-                  <FormItem
-                    key={index}
-                    name={`ingredients.${index}.quantity`}
-                    defaultValue={ingredient.quantity}
-                    label="Quantidade"
-                    className="w-full basis-[35%] grow"
-                  >
-                    <Input type="number"></Input>
-                  </FormItem>
+                  <ProductSelect className="w-full"></ProductSelect>
+                </FormItem>
+                <FormItem
+                  key={index}
+                  name={`ingredients.${index}.quantity`}
+                  defaultValue={ingredient.quantity}
+                  label="Quantidade"
+                  className="w-full basis-[35%] grow"
+                >
+                  <Input type="number"></Input>
+                </FormItem>
 
-                  <div className=" basis-[40%] grow">
-                    <label className="w-full flex flex-col" title="Total">
-                      <div className="whitespace-nowrap overflow-hidden overflow-ellipsis w-full flex gap-1">
-                        <span className="max-w-fit whitespace-nowrap overflow-hidden overflow-ellipsis">
-                          Total
-                        </span>
-                      </div>
-                    </label>
-                    <div>
-                      <Input
-                        value={NumberUtils.money(
-                          (product?.price || 0) * ingredient.quantity
-                        )}
-                        disabled
-                        className="disabled:opacity-40"
-                      />
+                <div className=" basis-[40%] grow">
+                  <label className="w-full flex flex-col" title="Total">
+                    <div className="whitespace-nowrap overflow-hidden overflow-ellipsis w-full flex gap-1">
+                      <span className="max-w-fit whitespace-nowrap overflow-hidden overflow-ellipsis">Total</span>
                     </div>
+                  </label>
+                  <div>
+                    <Input
+                      value={NumberUtils.money((product?.price || 0) * ingredient.quantity)}
+                      disabled
+                      className="disabled:opacity-40"
+                    />
                   </div>
-
-                  <Button
-                    type="button"
-                    className="h-12 basis-[10%]"
-                    onClick={() => handleRemoveIngredient(ingredient.id)}
-                  >
-                    <Trash></Trash>
-                  </Button>
                 </div>
-              );
-            })}
-          </div>
+
+                <Button
+                  type="button"
+                  className="h-12 basis-[10%]"
+                  onClick={() => handleRemoveIngredient(ingredient.id)}
+                >
+                  <Trash></Trash>
+                </Button>
+              </div>
+            );
+          })}
         </div>
-      </Form>
-    );
-  }
-);
+      </div>
+    </Form>
+  );
+});
 RecipeForm.displayName = 'RecipeForm';
